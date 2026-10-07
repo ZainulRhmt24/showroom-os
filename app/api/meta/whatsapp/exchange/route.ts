@@ -37,21 +37,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Konfigurasi Redirect URI belum lengkap di server.' }, { status: 500 })
     }
 
-    // 1. Exchange code for access token using POST
-    const tokenUrl = `https://graph.facebook.com/${apiVersion}/oauth/access_token`
+    // 1. Exchange code for access token using GET
+    const params = new URLSearchParams({
+      client_id: appId,
+      client_secret: appSecret,
+      code,
+    })
+    
+    const tokenUrl = `https://graph.facebook.com/${apiVersion}/oauth/access_token?${params.toString()}`
 
     const tokenRes = await fetch(tokenUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        client_id: appId,
-        client_secret: appSecret,
-        redirect_uri: redirectUri,
-        code,
-        grant_type: 'authorization_code'
-      })
+      method: 'GET',
     })
 
     const tokenData = await tokenRes.json()

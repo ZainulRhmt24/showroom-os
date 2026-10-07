@@ -107,6 +107,15 @@ export default function WhatsAppSettingsClient({ account, metaAppId, configId }:
     setErrorMsg('')
     sessionDataRef.current = {} // clear previous session data
 
+    console.log('META OAUTH CONTEXT', {
+      href: window.location.href,
+      origin: window.location.origin,
+      pathname: window.location.pathname,
+      configId,
+      responseType: 'code',
+      overrideDefaultResponseType: true,
+    })
+
     window.FB.login((response: any) => {
       if (response.authResponse && response.authResponse.code) {
         exchangeCode(response.authResponse.code, sessionDataRef.current.wabaId)
