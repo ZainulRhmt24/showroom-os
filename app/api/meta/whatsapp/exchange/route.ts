@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       client_id: appId,
       client_secret: appSecret,
       code,
-      redirect_uri: redirectUri || "", // Gunakan URL dari .env, atau empty string
+      redirect_uri: "", // MUST be empty string for codes obtained via FB.login
       grant_type: 'authorization_code',
     })
     
