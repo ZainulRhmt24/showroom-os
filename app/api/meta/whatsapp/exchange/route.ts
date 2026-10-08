@@ -32,23 +32,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Konfigurasi Meta di server belum lengkap.' }, { status: 500 })
     }
 
-    // 1. Exchange code for access token using POST
-    const tokenUrl = `https://graph.facebook.com/${apiVersion}/oauth/access_token`
+    // 1. Exchange code for access token using GET with URLSearchParams
+    // The Graph API /oauth/access_token endpoint does not accept application/json body.
+    // It requires parameters to be sent either in the query string or as application/x-www-form-urlencoded.
+    const queryParams = new URLSearchParams({
+      client_id: appId,
+      client_secret: appSecret,
+      code,
+      redirect_uri: redirectUri || "", // Gunakan URL dari .env, atau empty string
+      grant_type: 'authorization_code',
+    })
+    
+    const tokenUrl = `https://graph.facebook.com/${apiVersion}/oauth/access_token?${queryParams.toString()}`
 
     const tokenRes = await fetch(tokenUrl, {
-      method: 'POST',
+      method: 'GET', // Facebook recommends GET for oauth/access_token
       headers: {
-        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
-      body: JSON.stringify({
-        client_id: appId,
-        client_secret: appSecret,
-        // Meta Graph API requires redirect_uri to be exactly "" (empty string) 
-        // when exchanging a code obtained via FB.login (JS SDK).
-        redirect_uri: "",
-        code,
-        grant_type: 'authorization_code',
-      }),
     })
     const tokenData = await tokenRes.json()
 
