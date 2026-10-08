@@ -6,7 +6,7 @@ import { encryptToken } from '@/lib/encryption'
 export async function POST(req: Request) {
   try {
     const { showroom } = await requireOwner()
-    const { code, browserWabaId } = await req.json()
+    const { code, browserWabaId, currentUrl } = await req.json()
 
     if (!code) {
       return NextResponse.json({ success: false, error: 'Authorization code tidak valid.' }, { status: 400 })
@@ -15,7 +15,6 @@ export async function POST(req: Request) {
     const appId = process.env.META_APP_ID
     const appSecret = process.env.WHATSAPP_APP_SECRET || process.env.META_APP_SECRET
     const apiVersion = process.env.META_GRAPH_API_VERSION || 'v25.0'
-    const redirectUri = process.env.META_REDIRECT_URI
 
     console.log('META EXCHANGE DEBUG', {
       hasCode: Boolean(code),
@@ -23,7 +22,7 @@ export async function POST(req: Request) {
       hasBrowserWabaId: Boolean(browserWabaId),
       browserWabaIdLength: browserWabaId?.length ?? 0,
       appId: process.env.META_APP_ID,
-      redirectUri: process.env.META_REDIRECT_URI,
+      currentUrl,
       graphVersion: process.env.META_GRAPH_API_VERSION,
     });
 
@@ -32,24 +31,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Konfigurasi Meta di server belum lengkap.' }, { status: 500 })
     }
 
-    // 1. Exchange code for access token using GET with URLSearchParams
-    // The Graph API /oauth/access_token endpoint does not accept application/json body.
-    // It requires parameters to be sent either in the query string or as application/x-www-form-urlencoded.
-    const queryParams = new URLSearchParams({
+    // 1. Exchange code for access token using POST with x-www-form-urlencoded
+    const tokenUrl = `https://graph.facebook.com/${apiVersion}/oauth/access_token`
+    const formParams = new URLSearchParams({
       client_id: appId,
       client_secret: appSecret,
       code,
-      // We are completely omitting redirect_uri here, as Meta handles it internally for FB.login
+      redirect_uri: currentUrl || "", // Pass the exact URL from the frontend
       grant_type: 'authorization_code',
     })
-    
-    const tokenUrl = `https://graph.facebook.com/${apiVersion}/oauth/access_token?${queryParams.toString()}`
 
     const tokenRes = await fetch(tokenUrl, {
-      method: 'GET', // Facebook recommends GET for oauth/access_token
+      method: 'POST',
       headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
       },
+      body: formParams.toString(),
     })
     const tokenData = await tokenRes.json()
 

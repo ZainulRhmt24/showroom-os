@@ -138,7 +138,7 @@ export default function WhatsAppSettingsClient({ account, metaAppId, configId }:
       const res = await fetch('/api/meta/whatsapp/exchange', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, browserWabaId })
+        body: JSON.stringify({ code, browserWabaId, currentUrl: window.location.href.split('#')[0].split('?')[0] }) // Strip hash/query just in case
       })
 
       const data = await res.json()
