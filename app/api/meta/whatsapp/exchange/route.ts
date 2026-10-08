@@ -37,7 +37,6 @@ export async function POST(req: Request) {
       client_id: appId,
       client_secret: appSecret,
       code,
-      redirect_uri: currentUrl || "", // Pass the exact URL from the frontend
       grant_type: 'authorization_code',
     })
 
