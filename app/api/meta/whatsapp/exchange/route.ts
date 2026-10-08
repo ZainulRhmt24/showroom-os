@@ -32,11 +32,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: 'Konfigurasi Meta di server belum lengkap.' }, { status: 500 })
     }
 
-    if (!redirectUri) {
-      console.error('META_REDIRECT_URI is missing from environment variables.')
-      return NextResponse.json({ success: false, error: 'Konfigurasi Redirect URI belum lengkap di server.' }, { status: 500 })
-    }
-
     // 1. Exchange code for access token using POST
     const tokenUrl = `https://graph.facebook.com/${apiVersion}/oauth/access_token`
 
@@ -48,7 +43,8 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         client_id: appId,
         client_secret: appSecret,
-        redirect_uri: redirectUri,
+        // redirect_uri MUST NOT be included when exchanging a code obtained via FB.login (JS SDK)
+        // See Meta docs: it causes "Error validating verification code" if a mismatch occurs.
         code,
         grant_type: 'authorization_code',
       }),
