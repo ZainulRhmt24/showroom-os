@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       client_id: appId,
       client_secret: appSecret,
       code,
-      redirect_uri: "", // MUST be empty string for codes obtained via FB.login
+      // We are completely omitting redirect_uri here, as Meta handles it internally for FB.login
       grant_type: 'authorization_code',
     })
     
