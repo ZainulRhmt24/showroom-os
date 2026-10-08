@@ -43,8 +43,9 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         client_id: appId,
         client_secret: appSecret,
-        // redirect_uri MUST NOT be included when exchanging a code obtained via FB.login (JS SDK)
-        // See Meta docs: it causes "Error validating verification code" if a mismatch occurs.
+        // Meta Graph API requires redirect_uri to be exactly "" (empty string) 
+        // when exchanging a code obtained via FB.login (JS SDK).
+        redirect_uri: "",
         code,
         grant_type: 'authorization_code',
       }),
