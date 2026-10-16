@@ -127,7 +127,11 @@ export default function WhatsAppSettingsClient({ account, metaAppId, configId }:
       config_id: configId,
       response_type: 'code',
       override_default_response_type: true,
-      extras: {}
+      extras: {
+        setup: {},
+        featureType: '',
+        sessionInfoVersion: '3',
+      }
     })
   }
 
