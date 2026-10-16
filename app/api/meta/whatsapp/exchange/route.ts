@@ -14,6 +14,12 @@ export async function POST(req: Request) {
 
     const appId = process.env.META_APP_ID
     const appSecret = process.env.WHATSAPP_APP_SECRET || process.env.META_APP_SECRET
+    console.log('SECRET CHECK', {
+      usedWhatsappSecret: Boolean(process.env.WHATSAPP_APP_SECRET),
+      len: appSecret?.length,
+      last4: appSecret?.slice(-4),
+      metaSecretLast4: process.env.META_APP_SECRET?.slice(-4),
+    })
     const apiVersion = process.env.META_GRAPH_API_VERSION || 'v25.0'
 
     console.log('META EXCHANGE DEBUG', {
