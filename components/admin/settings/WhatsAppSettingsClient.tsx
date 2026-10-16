@@ -46,7 +46,7 @@ export default function WhatsAppSettingsClient({ account, metaAppId, configId }:
       return
     }
 
-    window.fbAsyncInit = function() {
+    window.fbAsyncInit = function () {
       window.FB.init({
         appId: metaAppId,
         autoLogAppEvents: true,
@@ -63,7 +63,7 @@ export default function WhatsAppSettingsClient({ account, metaAppId, configId }:
     script.crossOrigin = 'anonymous'
     document.body.appendChild(script)
 
-    return () => {}
+    return () => { }
   }, [metaAppId, configId])
 
   useEffect(() => {
@@ -79,13 +79,13 @@ export default function WhatsAppSettingsClient({ account, metaAppId, configId }:
             setIsLoading(false)
             setErrorMsg('Proses pendaftaran dibatalkan.')
           } else if (data.event === 'FINISH') {
-             sessionDataRef.current = {
-               wabaId: data.data?.waba_id,
-               phoneId: data.data?.phone_number_id
-             }
+            sessionDataRef.current = {
+              wabaId: data.data?.waba_id,
+              phoneId: data.data?.phone_number_id
+            }
           } else if (data.event === 'ERROR') {
-             setIsLoading(false)
-             setErrorMsg(data.data?.error_message || 'Terjadi kesalahan pada popup Meta.')
+            setIsLoading(false)
+            setErrorMsg(data.data?.error_message || 'Terjadi kesalahan pada popup Meta.')
           }
         }
       } catch (e) {
@@ -131,7 +131,7 @@ export default function WhatsAppSettingsClient({ account, metaAppId, configId }:
         setup: {},
         featureType: '',
         sessionInfoVersion: '3',
-      }
+      },
     })
   }
 
